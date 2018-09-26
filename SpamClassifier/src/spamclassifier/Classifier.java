@@ -33,24 +33,31 @@ public class Classifier {
         
         
         /// Calculate probability that message is a regular one or spam one respectively
-        double conditional_p_regular = 0.0;        
-        conditional_p_regular = container.getP_regular();   /// set class a priori
-        
-        double conditional_p_spam = 0.0;        
-        conditional_p_spam = container.getP_spam();         /// set class a priori
-        
+
+        double prior_regular = container.getP_regular();  /// set class a priori (already log)
+
+        double prior_spam = container.getP_spam();         /// set class a priori (already log)
+
+        double posterior_regular = prior_regular;
+        double posterior_spam = prior_spam;
         
         for (String keyEval : vocabEval.keySet()){
+
             //System.out.println("Key: " + keyEval + " Value: " + vocabEval.get(keyEval));
             if (container.getVocab().keySet().contains(keyEval)){
-                conditional_p_regular = conditional_p_regular + (double) vocabEval.get(keyEval) * (double) container.getVocab().get(keyEval).getLikelihoodRegular();
-                conditional_p_spam = conditional_p_spam + (double) vocabEval.get(keyEval) * (double) container.getVocab().get(keyEval).getLikelihoodSpam();
-                //System.out.println("Key: " + keyEval + " present: " + (double) vocabEval.get(keyEval) + " times. Value: " + (double) container.getVocab().get(keyEval).getLikelihoodRegular());
+                double conditional_p_regular = 0.0;
+                conditional_p_regular = container.getVocab().get(keyEval).getConditionalRegular();
+                double conditional_p_spam = 0.0;                //System.out.println("Key: " + keyEval + " present: " + (double) vocabEval.get(keyEval) + " times. Value: " + (double) container.getVocab().get(keyEval).getLikelihoodRegular());
+                conditional_p_spam = container.getVocab().get(keyEval).getConditionalSpam();
+
+                posterior_regular += conditional_p_regular;
+                posterior_spam += conditional_p_spam;
             }
+
         }
-        System.out.println("conditional_p_regular: " + conditional_p_regular + " conditional_p_spam: " + conditional_p_spam);
+        System.out.println("conditional_p_regular: " + posterior_regular + " conditional_p_spam: " + posterior_spam);
         /// Return NORMAL if log-posteri class probability for the message being regular/normal is higher than that of the message being spam, otherwise return SPAM
-        return (conditional_p_regular > conditional_p_spam ? Bayespam.MessageType.NORMAL : Bayespam.MessageType.SPAM);
+        return (posterior_regular > posterior_spam ? Bayespam.MessageType.NORMAL : Bayespam.MessageType.SPAM);
     }
     
     

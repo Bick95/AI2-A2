@@ -50,11 +50,11 @@ public class Bayespam
             return counterSpam;
         }
         
-        public double getLikelihoodRegular(){
+        public double getConditionalRegular(){
             return probRegular;
         }
         
-        public double getLikelihoodSpam(){
+        public double getConditionalSpam(){
             return probSpam;
         }
     }
@@ -66,8 +66,8 @@ public class Bayespam
         /// Just to make testing more convenient; hard code path to training/testing data
         if (args.length == 0){
             args = new String[2];
-            args[0] = "/home/daniel/Uni/ThirdYear/AI2/A2/spam-filter/test/";
-            args[1] = "/home/daniel/Uni/ThirdYear/AI2/A2/spam-filter/train/";
+            args[0] = "../../../../data/spam-filter/test/";
+            args[1] = "../../../../data/spam-filter/train/";
         }
         
         
