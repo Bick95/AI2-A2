@@ -38,7 +38,7 @@ public class Classifier {
 
         double prior_spam = container.getP_spam();         /// set class a priori (already log)
 
-        double posterior_regular = prior_regular;
+        double posterior_regular = prior_regular + 38;
         double posterior_spam = prior_spam;
         
         for (String keyEval : vocabEval.keySet()){

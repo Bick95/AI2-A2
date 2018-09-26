@@ -66,8 +66,8 @@ public class Bayespam
         /// Just to make testing more convenient; hard code path to training/testing data
         if (args.length == 0){
             args = new String[2];
-            args[0] = "../../../../data/spam-filter/test/";
-            args[1] = "../../../../data/spam-filter/train/";
+            args[0] = "/home/daniel/Uni/ThirdYear/Assignment2/data/spam-filter/test/";
+            args[1] = "/home/daniel/Uni/ThirdYear/Assignment2/data/spam-filter/train/";
         }
         
         
