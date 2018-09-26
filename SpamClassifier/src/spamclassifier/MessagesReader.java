@@ -47,7 +47,7 @@ public class MessagesReader {
         // Check if the cmd line arg is a directory
         if ( !dir_location.isDirectory() )
         {
-            System.out.println( "- Error: cmd line arg not a directory.\n" );
+            System.out.println( "- Error: cmd line arg not a directory. Directory:\n" + dir_location);
             Runtime.getRuntime().exit(0);
         }
 

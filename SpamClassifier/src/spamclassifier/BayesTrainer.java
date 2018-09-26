@@ -57,7 +57,7 @@ public class BayesTrainer {
         p_regular = Math.log((double) ((double)nMessagesRegular / (double)nMessagesTotal));        /// prior (log) probability for regular
         p_spam = Math.log((double) ((double)nMessagesSpam / (double)nMessagesTotal));              /// prior (log) probability for spam
         
-        System.out.println("nMessagesRegular: " + nMessagesRegular + " nMessagesSpam: " + nMessagesSpam + " nMessagesTotal: " + nMessagesTotal + " p_regular: " + p_regular + " p_spam: " + p_spam);
+        //System.out.println("nMessagesRegular: " + nMessagesRegular + " nMessagesSpam: " + nMessagesSpam + " nMessagesTotal: " + nMessagesTotal + " p_regular: " + p_regular + " p_spam: " + p_spam);
         /// Compute class conditional word probabilities:
         
         /// First, get regular- and spam-word-counts

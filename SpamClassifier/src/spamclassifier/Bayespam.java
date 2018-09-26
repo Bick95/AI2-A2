@@ -58,6 +58,20 @@ public class Bayespam
             return probSpam;
         }
     }
+    
+    static int parameterFitting(ContainerTrainingData container, String pathEval) throws IOException{
+        double max = 0;
+        int maxParam = 0;
+        for (int i = 0; i < 1000; i++){
+            Classifier classifier = new Classifier(container, pathEval, i);
+            classifier.eval();
+            if (max < classifier.getCombinedPercentageRight()){
+                max = classifier.getCombinedPercentageRight();
+                maxParam = i;
+            }
+        }
+        return maxParam;
+    }
 
    
     public static void main(String[] args) throws IOException
@@ -66,19 +80,26 @@ public class Bayespam
         /// Just to make testing more convenient; hard code path to training/testing data
         if (args.length == 0){
             args = new String[2];
-            args[0] = "/home/daniel/Uni/ThirdYear/Assignment2/data/spam-filter/test/";
-            args[1] = "/home/daniel/Uni/ThirdYear/Assignment2/data/spam-filter/train/";
+            args[0] = "/home/daniel/Uni/ThirdYear/Assignment2/data/spam-filter/train/";
+            args[1] = "/home/daniel/Uni/ThirdYear/Assignment2/data/spam-filter/test/";
         }
         
-        
+
         /// Get trained data in a compact container
         ContainerTrainingData container = new BayesTrainer().getTrainingResult(args[0]);
+        
+        /// Fit a parameter for increasing the performance of the classifier
+        int param = parameterFitting(container, args[1]);
+        
         
         // Print out the hash table contained in container
         //container.printVocab();
         
-        Classifier classifier = new Classifier(container, args[1]);
+        Classifier classifier = new Classifier(container, args[1], param);
         classifier.eval();
+        classifier.printConfusionMatrix();
+        System.out.println("Parameter used for fitting: " + param);
+        
         
         // Now all students must continue from here:
         //

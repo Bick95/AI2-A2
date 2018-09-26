@@ -18,12 +18,26 @@ public class Classifier {
     private ContainerTrainingData container = new ContainerTrainingData();                      /// Training data
     private ArrayList<EvalMessage> evaluationMessages = new ArrayList<EvalMessage>();   /// Evaluation data
     
+    private int normalCorrect;
+    private int spamCorrect;
+    private int t1Error;
+    private int t2Error;
+    
+    private int param;
     
     public Classifier(ContainerTrainingData container, String path) throws IOException{
         ///Get evaluation data:
         MessagesReader reader = new MessagesReader();
         this.evaluationMessages = reader.getEvaluationSet(path);
         
+        this.container = container;
+    }
+    
+    public Classifier(ContainerTrainingData container, String path, int param) throws IOException{
+        ///Get evaluation data:
+        MessagesReader reader = new MessagesReader();
+        this.evaluationMessages = reader.getEvaluationSet(path);
+        this.param = param;
         this.container = container;
     }
     
@@ -38,7 +52,7 @@ public class Classifier {
 
         double prior_spam = container.getP_spam();         /// set class a priori (already log)
 
-        double posterior_regular = prior_regular + 38;
+        double posterior_regular = prior_regular + param; // + 38
         double posterior_spam = prior_spam;
         
         for (String keyEval : vocabEval.keySet()){
@@ -55,7 +69,7 @@ public class Classifier {
             }
 
         }
-        System.out.println("conditional_p_regular: " + posterior_regular + " conditional_p_spam: " + posterior_spam);
+        //System.out.println("conditional_p_regular: " + posterior_regular + " conditional_p_spam: " + posterior_spam);
         /// Return NORMAL if log-posteri class probability for the message being regular/normal is higher than that of the message being spam, otherwise return SPAM
         return (posterior_regular > posterior_spam ? Bayespam.MessageType.NORMAL : Bayespam.MessageType.SPAM);
     }
@@ -69,14 +83,14 @@ public class Classifier {
         return classifications;
     }
     
-    public BigDecimal roundDouble(double x, int decimalPlaces) 
+    private BigDecimal roundDouble(double x, int decimalPlaces) 
 {
     BigDecimal rounded = new BigDecimal(Double.toString(x));
     rounded = rounded.setScale(decimalPlaces, BigDecimal.ROUND_HALF_UP);       
     return rounded;
 }
     
-    private void printConfusionMatrix(int normalCorrect, int spamCorrect, int t1Error, int t2Error){
+    public void printConfusionMatrix(){
         double pSpamCorrect = (double) spamCorrect / ((double) spamCorrect + (double) t2Error) * 100.0;
         double pNormalCorrect = (double) normalCorrect / ((double) t1Error + (double) normalCorrect) * 100.0;
         System.out.println("Confusion Matrix:");
@@ -88,16 +102,16 @@ public class Classifier {
     
     public void eval(){
         // Print out the hash table contained in container
-        container.printVocab();
+        //container.printVocab();
         
-        int t1Error = 0; /// Type 1-Error: Normal message classified as spam
-        int t2Error = 0; /// Type 2-Error: Spam message classified as normal message
-        int normalCorrect = 0;
-        int spamCorrect = 0;
+        t1Error = 0; /// Type 1-Error: Normal message classified as spam
+        t2Error = 0; /// Type 2-Error: Spam message classified as normal message
+        normalCorrect = 0;
+        spamCorrect = 0;
         ArrayList<Bayespam.MessageType> classifications = classifyAll();
         
         for (int i = 0; i < classifications.size(); i++){
-            System.out.println("True: " + evaluationMessages.get(i).getType() + " Prodeicted: " + classifications.get(i));
+            //System.out.println("True: " + evaluationMessages.get(i).getType() + " Prodeicted: " + classifications.get(i));
             if (evaluationMessages.get(i).getType() == classifications.get(i)){ /// Correct classification
                 if (evaluationMessages.get(i).getType() == Bayespam.MessageType.NORMAL)
                     normalCorrect++;
@@ -111,6 +125,12 @@ public class Classifier {
             }
         }
         
-        printConfusionMatrix(normalCorrect, spamCorrect, t1Error, t2Error);
+        //printConfusionMatrix();
+    }
+    
+    public double getCombinedPercentageRight(){
+        double pSpamCorrect = (double) spamCorrect / ((double) spamCorrect + (double) t2Error) * 100.0;
+        double pNormalCorrect = (double) normalCorrect / ((double) t1Error + (double) normalCorrect) * 100.0;
+        return pSpamCorrect + pNormalCorrect;
     }
 }
