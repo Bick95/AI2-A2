@@ -8,6 +8,8 @@ public class BayesTrainer {
     // A hash table for the vocabulary (word searching is very fast in a hash table)
     private Hashtable <String, Bayespam.Multiple_Counter> vocab = new Hashtable <String, Bayespam.Multiple_Counter> ();
     
+    private MessagesReader reader;
+    
     private int nMessagesRegular;
     private int nMessagesSpam;
     private int nMessagesTotal;
@@ -17,7 +19,11 @@ public class BayesTrainer {
     private int nWordsSpam;
     private double ERROR_TERM = 1;
     
-    
+    public BayesTrainer(String path) throws IOException {
+        ///Get training data:
+        reader = new MessagesReader();
+        vocab = reader.getTrainingVocab(path);
+    }
     
     /// Method computes the count of occurances of distinct words in regular and spam mails respectively:
     private void countRegularAndSpamWords(){
@@ -43,10 +49,7 @@ public class BayesTrainer {
         
     }
     
-    private void train (String path) throws IOException{
-        ///Get training data:
-        MessagesReader reader = new MessagesReader();
-        vocab = reader.getTrainingVocab(path);
+    private void train (){
         
         nMessagesRegular = reader.getnMessagesRegular();
         nMessagesSpam = reader.getnMessagesSpam();
@@ -80,8 +83,8 @@ public class BayesTrainer {
         return container;
     }
     
-    public ContainerTrainingData getTrainingResult(String path) throws IOException{
-        train(path);
+    public ContainerTrainingData getTrainingResult(){
+        train();
         return generateReturnValue();
     }
     

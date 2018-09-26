@@ -86,7 +86,7 @@ public class Bayespam
         
 
         /// Get trained data in a compact container
-        ContainerTrainingData container = new BayesTrainer().getTrainingResult(args[0]);
+        ContainerTrainingData container = new BayesTrainer(args[0]).getTrainingResult();
         
         /// Fit a parameter for increasing the performance of the classifier
         int param = parameterFitting(container, args[1]);

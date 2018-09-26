@@ -29,18 +29,33 @@ public class TextCleaner {
     
 /// Special String-Cases section. This section determines, whether a token is a special instance of a string, e.g. E-Mail-Address, Internet-Address, number etc.
     
+    /// This method checks whether a token is a date. It uses java regex expressions. It classifies tokens of the following patterns as dates:
+    /// d.m.yy || dd.mm.yy || d.mm.yyyy || d-m-yy || d/m/yy and all logical combinations of those patterns, which may be followed by full stop or comma.
+    public boolean isDate(String date) {
+            
+        Pattern DATE_PATTERN = Pattern.compile("^([1-9]|0[1-9]|1[0-9]|2[0-9]|3[0-1])(\\.|\\/|\\-)((0[1-9])|([1-9]|1[0-2]))(\\.|\\/|\\-)(\\d{2}|\\d{4})(\\.|\\,|$)");
+
+            if (DATE_PATTERN.matcher(date).matches()) 
+                return true;
+            
+            return false;
+    }
+    
     /// This method checks whether a String is numeric (return value true) or not (return value false)
     private boolean isNumeric(String s) {
         if (s != null){ /// If string equals null, return false
             char[] parts = s.toCharArray();
-            /// 2 alternative, genral patterns, a string has to match in order to be numeric (digits || digits + '.' + digits):
+            /// Using Java regex expression, first define two possible patterbs how a regular number would look like: digits || digits + '.' + digits
             Pattern nr = Pattern.compile("(\\d+)|(\\d+.\\d+)"); 
-            /// Punctuation has not been removed yet. If last character of input string is numeric, return whether the string patches the pattern defined above
-            if (Character.isDigit(parts[parts.length - 1])){ //
+            
+            /// Punctuation has not been removed yet. If last character of input string is numeric, return whether the whole string matches 
+            /// the pattern defined above:
+            if (Character.isDigit(parts[parts.length - 1])){ 
                 return nr.matcher(s).matches();
             } 
+            
             /// If last character is neither numeric, nor alphabetic, it must be punctuation. 
-            /// In that case omit that character for checking whether string equals pattern above
+            /// In that case omit the last character for checking whether string equals pattern above
             else if (parts.length > 1 && ! Character.isAlphabetic(parts[parts.length - 1])){ 
                 return nr.matcher(s.substring(0, parts.length - 2)).matches();
             }
@@ -50,7 +65,7 @@ public class TextCleaner {
     }
     
     /// This method uses a pattern which checks whether the string passed to the method is a possibly valid e-mail-address, 
-    /// following the structure of [someText.-+]@[provider].[ending with 2 or 3 letters, like .de, .nl or .com]
+    /// following the structure of [someText.-+]@[provider].[ending with 2 or 3 letters, like ".de", ".nl" or ".com"]
     public boolean isEMailAddress(String str){
         String regex = "([a-zA-Z0-9._%+-]+@[a-zA-Z0-9._%+-]+.[a-zA-Z]{2,3})*";
         Pattern p = Pattern.compile(regex);
@@ -59,10 +74,7 @@ public class TextCleaner {
     
     /// Main method to determine whether string is a "special case"
     private String getSpecialCases(String str){
-        //switch (str.co) {
-        //    case 
-        //}
-        if (str.contains("www.") || str.contains("http")){ // TODO:  Implement pattern matcher!
+        if (str.contains("www.") || str.contains("http")){ 
             return "internetaddress";
         }
         if (isEMailAddress(str)){
@@ -70,6 +82,9 @@ public class TextCleaner {
         }
         if (isNumeric(str)){
             return "number";
+        }
+        if (isDate(str)){
+            return "concretedate";
         }
         
         return null;
