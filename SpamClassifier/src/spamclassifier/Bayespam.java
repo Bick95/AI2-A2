@@ -64,7 +64,7 @@ public class Bayespam
     static int parameterFitting(ContainerTrainingData container, String pathEval, int type) throws IOException{
         double max = 0;
         int maxParam = 0;
-        for (int i = -100; i < 100; i++){
+        for (int i = 0; i < 1; i++){
             Classifier classifier = new Classifier(container, pathEval, i, type);
             classifier.eval();
             if (max < classifier.getCombinedPercentageRight()){
@@ -99,6 +99,7 @@ public class Bayespam
 
         /// Get trained data in a compact container
         ContainerTrainingData container = new BayesTrainer(args[0], type).getTrainingResult();
+        //container.printVocab();
         
         /// Fit a parameter for increasing the performance of the classifier
         int param = parameterFitting(container, args[1], type);

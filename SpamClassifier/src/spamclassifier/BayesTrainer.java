@@ -1,7 +1,10 @@
 package spamclassifier;
 
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Set;
 
 public class BayesTrainer {
     
@@ -70,9 +73,25 @@ public class BayesTrainer {
         calculateLogClassCondLikelihoods();
         
     }
+
+    private void cleanVocab(){
+        //this function removes words from the vocab that
+        // did not occur in the training set at least minimumOccurence times in total
+
+        int minimumOccurence = 0;
+        Enumeration<String> keys = vocab.keys();
+        while (keys.hasMoreElements()){
+            String key = keys.nextElement();
+            if (vocab.get(key).getRegularCount() + vocab.get(key).getSpamCount() < minimumOccurence ){
+                vocab.remove(key);
+                System.out.println(key);
+            }
+        }
+    }
     
     private ContainerTrainingData generateReturnValue(){
         ContainerTrainingData container = new ContainerTrainingData();
+        cleanVocab();
         container.setVocab(vocab);
         container.setnMessagesRegular(nMessagesRegular);
         container.setnMessagesSpam(nMessagesSpam);
