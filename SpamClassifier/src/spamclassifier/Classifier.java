@@ -25,20 +25,23 @@ public class Classifier {
     
     private int param;
     
-    public Classifier(ContainerTrainingData container, String path) throws IOException{
+    public Classifier(ContainerTrainingData container, String path, int type) throws IOException{
         ///Get evaluation data:
-        MessagesReader reader = new MessagesReader();
+        System.out.println("type is (in classifier, short constructor)" + type);
+        MessagesReader reader = new MessagesReader(type);
         this.evaluationMessages = reader.getEvaluationSet(path);
         
         this.container = container;
     }
     
-    public Classifier(ContainerTrainingData container, String path, int param) throws IOException{
+    public Classifier(ContainerTrainingData container, String path, int param, int type) throws IOException{
         ///Get evaluation data:
-        MessagesReader reader = new MessagesReader();
+        System.out.println("type is (in classifier)" + type);
+        MessagesReader reader = new MessagesReader(type);
         this.evaluationMessages = reader.getEvaluationSet(path);
         this.param = param;
         this.container = container;
+
     }
     
     private Bayespam.MessageType classifyMessage(EvalMessage message){
@@ -52,9 +55,10 @@ public class Classifier {
 
         double prior_spam = container.getP_spam();         /// set class a priori (already log)
 
-        double posterior_regular = prior_regular + param; // + 38
+        double posterior_regular = prior_regular + param; // bias value
         double posterior_spam = prior_spam;
-        
+
+
         for (String keyEval : vocabEval.keySet()){
 
             //System.out.println("Key: " + keyEval + " Value: " + vocabEval.get(keyEval));
@@ -63,12 +67,16 @@ public class Classifier {
                 conditional_p_regular = container.getVocab().get(keyEval).getConditionalRegular();
                 double conditional_p_spam = 0.0;                //System.out.println("Key: " + keyEval + " present: " + (double) vocabEval.get(keyEval) + " times. Value: " + (double) container.getVocab().get(keyEval).getLikelihoodRegular());
                 conditional_p_spam = container.getVocab().get(keyEval).getConditionalSpam();
+                
+
 
                 posterior_regular += conditional_p_regular;
                 posterior_spam += conditional_p_spam;
             }
 
         }
+
+
         //System.out.println("conditional_p_regular: " + posterior_regular + " conditional_p_spam: " + posterior_spam);
         /// Return NORMAL if log-posteri class probability for the message being regular/normal is higher than that of the message being spam, otherwise return SPAM
         return (posterior_regular > posterior_spam ? Bayespam.MessageType.NORMAL : Bayespam.MessageType.SPAM);

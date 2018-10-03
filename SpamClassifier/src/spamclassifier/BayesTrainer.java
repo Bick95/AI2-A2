@@ -19,9 +19,9 @@ public class BayesTrainer {
     private int nWordsSpam;
     private double ERROR_TERM = 1;
     
-    public BayesTrainer(String path) throws IOException {
+    public BayesTrainer(String path, int type) throws IOException {
         ///Get training data:
-        reader = new MessagesReader();
+        reader = new MessagesReader(type);
         vocab = reader.getTrainingVocab(path);
     }
     

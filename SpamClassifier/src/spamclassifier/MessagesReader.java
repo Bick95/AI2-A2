@@ -13,8 +13,13 @@ import java.util.StringTokenizer;
 
 
 public class MessagesReader {
+    private int gramType;
     
 /// General funnctionality - Reading in messages
+    public MessagesReader(int gramType){
+        //System.out.println("type is " + gramType);
+        this.gramType = gramType;
+    }
 
     // Listings of the two subdirectories (regular/ and spam/)
     private File[] listing_regular = new File[0];
@@ -30,7 +35,7 @@ public class MessagesReader {
         // Check that there are 2 subdirectories
         if ( dir_listing.length != 2 )
         {
-            System.out.println( "- Error: specified directory does not contain two subdirectories.\n" );
+            //System.out.println( "- Error: specified directory does not contain two subdirectories.\n" );
             Runtime.getRuntime().exit(0);
         }
 
@@ -47,7 +52,7 @@ public class MessagesReader {
         // Check if the cmd line arg is a directory
         if ( !dir_location.isDirectory() )
         {
-            System.out.println( "- Error: cmd line arg not a directory. Directory:\n" + dir_location);
+            //System.out.println( "- Error: cmd line arg not a directory. Directory:\n" + dir_location);
             Runtime.getRuntime().exit(0);
         }
 
@@ -95,7 +100,7 @@ public class MessagesReader {
     throws IOException
     {
         TextCleaner cleaner = new TextCleaner();
-        String tmp;
+        String tmp = null;
         File[] messages = new File[0];
 
         if (type == Bayespam.MessageType.NORMAL){
@@ -112,17 +117,56 @@ public class MessagesReader {
             BufferedReader in = new BufferedReader(new InputStreamReader(i_s));
             String line;
             String word;
+            String transition = null;
             
             while ((line = in.readLine()) != null)                      // read a line
             {
+
                 StringTokenizer st = new StringTokenizer(line);         // parse it into words/tokens
-        
-                while (st.hasMoreTokens())                  // while there are stille words left..
+                String[] stArray = line.split(" ");
+                int position = 0;
+                if (transition != null){
+                    tmp = transition;
+                }
+                while (st.hasMoreTokens() && position<stArray.length -1 )                  // while there are stille words left..
                 {
-                    tmp = cleaner.returnCleanText(st.nextToken()); /// First clean input tokens, before adding them to vocabulary
+                    ////System.out.println("loop tokens, type is");
+                    ////System.out.println(gramType);
+                    ///bigram construction
+                    if (gramType == 2||gramType == 3) {
+                        String tmpNext = null;
+                        int skip = 0;
+                        if (tmp == null) {
+                            tmp = (cleaner.returnCleanText(stArray[position]));
+                        }
+                        if (tmp != null) {
+                            while (tmpNext == null && position + skip < stArray.length - 1) {
+                                tmpNext = (cleaner.returnCleanText(stArray[position + skip + 1]));
+                                skip++;
+                            }
+                            if (tmpNext == null) {
+                                transition = tmp;
+                                break;
+                            }
+                            tmp += tmpNext;
+                        }
+
+                        ////System.out.println(tmp);
+
+                        position++;
+                    } if(gramType == 1||gramType == 3) {
+
+                        //unigram
+
+                        tmp = cleaner.returnCleanText(st.nextToken()); /// First clean input tokens, before adding them to vocabulary
+                    }
                     if (tmp != null)
                         addWordTraining(tmp, type);                  // add word to the vocabulary
+                    tmp = null;
+                    transition = null;
+
                 }
+
             }
 
             in.close();
@@ -154,7 +198,7 @@ public class MessagesReader {
         
         
         TextCleaner cleaner = new TextCleaner();
-        String tmp;
+        String tmp = null;
         File[] messages = new File[0];
 
         if (type == Bayespam.MessageType.NORMAL){
@@ -168,20 +212,56 @@ public class MessagesReader {
         for (int i = 0; i < messages.length; ++i){
             
             /// A hash table per evaluation message containing the words containd in the eval-e-mail plus the respective word count
+            ////System.out.println("reading new evaluation message");
             Hashtable <String, Integer> vocabEval = new Hashtable <String, Integer> ();
-            
             FileInputStream i_s = new FileInputStream( messages[i] );
             BufferedReader in = new BufferedReader(new InputStreamReader(i_s));
             String line;
             String word;
-            
+            String transition = null;
             while ((line = in.readLine()) != null){                     // read a line
+
                 
                 StringTokenizer st = new StringTokenizer(line);         // parse it into words/tokens
-        
-                while (st.hasMoreTokens()){                             // while there are stille words left..
-                
-                    tmp = cleaner.returnCleanText(st.nextToken());      /// First clean input tokens, before adding them to vocabulary
+                String[] stArray = line.split(" ");
+                int position = 0;
+
+                if (transition != null){
+                    tmp = transition;
+                }
+
+                while (st.hasMoreTokens()&&position<stArray.length-1){                             // while there are stille words left..
+
+                    ///bigram construction
+                    ////System.out.println("loop tokens, type is");
+                    ////System.out.println(gramType);
+                    if(gramType == 2||gramType == 3) {
+                        String tmpNext = null;
+                        int skip = 0;
+                        if (tmp == null) {
+                            tmp = (cleaner.returnCleanText(stArray[position]));
+                        }
+                        if (tmp != null) {
+                            while (tmpNext == null && position + skip < stArray.length - 1) {
+                                tmpNext = (cleaner.returnCleanText(stArray[position + skip + 1]));
+                                skip++;
+                            }
+                            if (tmpNext == null) {
+                                transition = tmp;
+                                break;
+                            }
+                            tmp += tmpNext;
+                        }
+
+                        ////System.out.println(tmp);
+
+                        position++;
+                    }if (gramType == 1||gramType == 3) {
+
+                        //unigram construction
+                        tmp = cleaner.returnCleanText(st.nextToken());      /// First clean input tokens, before adding them to vocabulary
+                        ////System.out.println("evaluation, type uni");
+                    }
                     if (tmp != null){
                         int counter = 1;                                /// word has occured ar least once
                         if (vocabEval.containsKey(tmp)){
@@ -190,6 +270,8 @@ public class MessagesReader {
                         }
                         vocabEval.put(tmp, counter);                    /// add word to list of words in test mail
                     }
+                    tmp = null;
+                    transition = null;
                 }
             }
             

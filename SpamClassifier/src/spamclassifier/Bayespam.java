@@ -1,6 +1,7 @@
 package spamclassifier;
 
 import java.io.*;
+import java.util.Scanner;
 
 public class Bayespam
 {
@@ -14,6 +15,7 @@ public class Bayespam
     }
 
     // This a class with two counters (for regular and for spam)
+
     static class Multiple_Counter
     {
         private int counterSpam    = 0;
@@ -59,11 +61,11 @@ public class Bayespam
         }
     }
     
-    static int parameterFitting(ContainerTrainingData container, String pathEval) throws IOException{
+    static int parameterFitting(ContainerTrainingData container, String pathEval, int type) throws IOException{
         double max = 0;
         int maxParam = 0;
-        for (int i = 0; i < 1000; i++){
-            Classifier classifier = new Classifier(container, pathEval, i);
+        for (int i = -100; i < 100; i++){
+            Classifier classifier = new Classifier(container, pathEval, i, type);
             classifier.eval();
             if (max < classifier.getCombinedPercentageRight()){
                 max = classifier.getCombinedPercentageRight();
@@ -76,26 +78,38 @@ public class Bayespam
    
     public static void main(String[] args) throws IOException
     {
-        
+
+        //prompt for uni/bigrams
+        Scanner typeSc = new Scanner(System.in);
+        System.out.println("Which method dou you want to use? Type 1 for uningram, 2 for bigram, 3 for both");
+        int type = 0;
+        do{
+            type = typeSc.nextInt();
+            if(type>3||type<0){
+                System.out.println("Please enter a valid method: 1 for unigram, 2 for bigram, 3 for both");
+            }
+        }while(type<0||type>3);
         /// Just to make testing more convenient; hard code path to training/testing data
         if (args.length == 0){
             args = new String[2];
-            args[0] = "/home/daniel/Uni/ThirdYear/Assignment2/data/spam-filter/train/";
-            args[1] = "/home/daniel/Uni/ThirdYear/Assignment2/data/spam-filter/test/";
+            args[0] = "C:\\Users\\Bálint\\Desktop\\Bálint\\RUG\\3A\\AI2\\2nd\\data\\spam-filter\\train/";
+            args[1] = "C:\\Users\\Bálint\\Desktop\\Bálint\\RUG\\3A\\AI2\\2nd\\data\\spam-filter\\test/";
         }
         
 
         /// Get trained data in a compact container
-        ContainerTrainingData container = new BayesTrainer(args[0]).getTrainingResult();
+        ContainerTrainingData container = new BayesTrainer(args[0], type).getTrainingResult();
         
         /// Fit a parameter for increasing the performance of the classifier
-        int param = parameterFitting(container, args[1]);
+        int param = parameterFitting(container, args[1], type);
         
         
         // Print out the hash table contained in container
         //container.printVocab();
-        
-        Classifier classifier = new Classifier(container, args[1], param);
+
+        System.out.println("container is " + container.toString() + " path is " + args[1] + " param is " + param + "type is " + type);
+
+        Classifier classifier = new Classifier(container, args[1], param, type);
         classifier.eval();
         classifier.printConfusionMatrix();
         System.out.println("Parameter used for fitting: " + param);
