@@ -27,7 +27,6 @@ public class Classifier {
     
     public Classifier(ContainerTrainingData container, String path, int type) throws IOException{
         ///Get evaluation data:
-        System.out.println("type is (in classifier, short constructor)" + type);
         MessagesReader reader = new MessagesReader(type);
         this.evaluationMessages = reader.getEvaluationSet(path);
         
@@ -36,7 +35,6 @@ public class Classifier {
     
     public Classifier(ContainerTrainingData container, String path, int param, int type) throws IOException{
         ///Get evaluation data:
-        System.out.println("type is (in classifier)" + type);
         MessagesReader reader = new MessagesReader(type);
         this.evaluationMessages = reader.getEvaluationSet(path);
         this.param = param;

@@ -3,10 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/daniel/Coding/SpamClassifier/src/spamclassifier/TextCleaner.java</file>
-            <file>file:/home/daniel/Coding/SpamClassifier/src/spamclassifier/Bayespam1.java</file>
-            <file>file:/home/daniel/Coding/SpamClassifier/src/spamclassifier/Bayespam.java</file>
-            <file>file:/home/daniel/Coding/SpamClassifier/src/spamclassifier/TrainingClass.java</file>
+            <file>file:/home/daniel/Uni/ThirdYear/Assignment2/AI2-A2/SpamClassifier/src/spamclassifier/ContainerTrainingData.java</file>
+            <file>file:/home/daniel/Uni/ThirdYear/Assignment2/AI2-A2/SpamClassifier/src/spamclassifier/Bayespam.java</file>
+            <file>file:/home/daniel/Uni/ThirdYear/Assignment2/AI2-A2/SpamClassifier/src/spamclassifier/TextCleaner.java</file>
+            <file>file:/home/daniel/Uni/ThirdYear/Assignment2/AI2-A2/SpamClassifier/src/spamclassifier/MessagesReader.java</file>
+            <file>file:/home/daniel/Uni/ThirdYear/Assignment2/AI2-A2/SpamClassifier/src/spamclassifier/BayesTrainer.java</file>
+            <file>file:/home/daniel/Uni/ThirdYear/Assignment2/AI2-A2/SpamClassifier/src/spamclassifier/Classifier.java</file>
         </group>
     </open-files>
 </project-private>
