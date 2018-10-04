@@ -61,11 +61,11 @@ public class Bayespam
         }
     }
     
-    static int parameterFitting(ContainerTrainingData container, String pathEval, int type) throws IOException{
+    static int parameterFitting(ContainerTrainingData container, String pathTraining, int type) throws IOException{
         double max = 0;
         int maxParam = 0;
-        for (int i = 0; i < 1; i++){
-            Classifier classifier = new Classifier(container, pathEval, i, type);
+        for (int i = -50; i < 50; i++){
+            Classifier classifier = new Classifier(container, pathTraining, i, type);
             classifier.eval();
             if (max < classifier.getCombinedPercentageRight()){
                 max = classifier.getCombinedPercentageRight();
@@ -78,8 +78,7 @@ public class Bayespam
    
     public static void main(String[] args) throws IOException
     {
-
-        //prompt for uni/bigrams
+        ///prompt for uni/bigrams
         Scanner typeSc = new Scanner(System.in);
         System.out.println("Which method dou you want to use? Type 1 for uningram, 2 for bigram, 3 for both");
         int type = 0;
@@ -89,11 +88,19 @@ public class Bayespam
                 System.out.println("Please enter a valid method: 1 for unigram, 2 for bigram, 3 for both");
             }
         }while(type<0||type>3);
+        
         /// Just to make testing more convenient; hard code path to training/testing data
         if (args.length == 0){
             args = new String[2];
-            args[0] = "C:\\Users\\Bálint\\Desktop\\Bálint\\RUG\\3A\\AI2\\2nd\\data\\spam-filter\\train/";
-            args[1] = "C:\\Users\\Bálint\\Desktop\\Bálint\\RUG\\3A\\AI2\\2nd\\data\\spam-filter\\test/";
+            if (System.getProperties().getProperty("user.name").toString().equals("Bálint")){ /// Specifically for Bálint's pc
+                args[0] = "C:\\Users\\Bálint\\Desktop\\Bálint\\RUG\\3A\\AI2\\2nd\\data\\spam-filter\\train/";
+                args[1] = "C:\\Users\\Bálint\\Desktop\\Bálint\\RUG\\3A\\AI2\\2nd\\data\\spam-filter\\test/";
+            } else if (System.getProperties().getProperty("user.name").toString().equals("daniel")){  /// Specifically for Daniel's's pc
+                args[0] = "/home/daniel/Uni/ThirdYear/Assignment2/data/spam-filter/train/";
+                args[1] = "/home/daniel/Uni/ThirdYear/Assignment2/data/spam-filter/test/";
+            } else {
+                System.err.println("No valid path given!");
+            }
         }
         
 
@@ -102,13 +109,11 @@ public class Bayespam
         //container.printVocab();
         
         /// Fit a parameter for increasing the performance of the classifier
-        int param = parameterFitting(container, args[1], type);
+        int param = parameterFitting(container, args[0], type);
         
         
         // Print out the hash table contained in container
-        //container.printVocab();
-
-        System.out.println("container is " + container.toString() + " path is " + args[1] + " param is " + param + "type is " + type);
+        //container.printVocab(); /// for testing
 
         Classifier classifier = new Classifier(container, args[1], param, type);
         classifier.eval();
@@ -118,9 +123,9 @@ public class Bayespam
         
         // Now all students must continue from here:
         //
-        // 1) A priori class probabilities must be computed from the number of regular and spam messages - done
-        // 2) The vocabulary must be clean: punctuation and digits must be removed, case insensitive - done
-        // 3) Conditional probabilities must be computed for every word - done
+        // 1) A priori class probabilities must be computed from the number of regular and spam messages
+        // 2) The vocabulary must be clean: punctuation and digits must be removed, case insensitive
+        // 3) Conditional probabilities must be computed for every word
         // 4) A priori probabilities must be computed for every word 
         // 5) Zero probabilities must be replaced by a small estimated value
         // 6) Bayes rule must be applied on new messages, followed by argmax classification
