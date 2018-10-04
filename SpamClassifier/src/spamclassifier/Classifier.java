@@ -134,6 +134,10 @@ public class Classifier {
         //printConfusionMatrix();
     }
     
+    public double getTrueNegRate(){ /// Returns True Negative rate
+        return (double) normalCorrect / ((double) t1Error + (double) normalCorrect) * 100.0;
+    }
+    
     public double getCombinedPercentageRight(){
         double pSpamCorrect = (double) spamCorrect / ((double) spamCorrect + (double) t2Error) * 100.0;
         double pNormalCorrect = (double) normalCorrect / ((double) t1Error + (double) normalCorrect) * 100.0;

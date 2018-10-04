@@ -63,11 +63,16 @@ public class Bayespam
     
     static int parameterFitting(ContainerTrainingData container, String pathTraining, int type) throws IOException{
         double max = 0;
+        double maxTrueNeg = 0;
         int maxParam = 0;
         for (int i = -100; i < 100; i++){
             Classifier classifier = new Classifier(container, pathTraining, i, type);
             classifier.eval();
-            if (max < classifier.getCombinedPercentageRight()){
+          /*  if (maxTrueNeg < classifier.getTrueNegRate()){
+                max = classifier.getCombinedPercentageRight();
+                maxParam = i;
+            } else*/ if (     max < classifier.getCombinedPercentageRight() 
+                        /*&&  maxTrueNeg >= classifier.getTrueNegRate()*/ ){
                 max = classifier.getCombinedPercentageRight();
                 maxParam = i;
             }
