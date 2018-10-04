@@ -143,4 +143,10 @@ public class Classifier {
         double pNormalCorrect = (double) normalCorrect / ((double) t1Error + (double) normalCorrect) * 100.0;
         return pSpamCorrect + pNormalCorrect;
     }
+    
+    public double getCombinedPercentageRightWeighted(){
+        double pSpamCorrect = 0.35 * (double) spamCorrect / ((double) spamCorrect + (double) t2Error) * 100.0;
+        double pNormalCorrect = 0.65 * (double) normalCorrect / ((double) t1Error + (double) normalCorrect) * 100.0;
+        return pSpamCorrect + pNormalCorrect;
+    }
 }

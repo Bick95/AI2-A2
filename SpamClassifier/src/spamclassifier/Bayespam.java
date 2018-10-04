@@ -71,9 +71,9 @@ public class Bayespam
           /*  if (maxTrueNeg < classifier.getTrueNegRate()){
                 max = classifier.getCombinedPercentageRight();
                 maxParam = i;
-            } else*/ if (     max < classifier.getCombinedPercentageRight() 
+            } else*/ if (     max < classifier.getCombinedPercentageRightWeighted() 
                         /*&&  maxTrueNeg >= classifier.getTrueNegRate()*/ ){
-                max = classifier.getCombinedPercentageRight();
+                max = classifier.getCombinedPercentageRightWeighted();
                 maxParam = i;
             }
         }
