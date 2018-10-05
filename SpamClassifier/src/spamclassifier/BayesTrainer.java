@@ -12,6 +12,7 @@ public class BayesTrainer {
     private Hashtable <String, Bayespam.Multiple_Counter> vocab = new Hashtable <String, Bayespam.Multiple_Counter> ();
     
     private MessagesReader reader;
+    private int gramType;
     
     private int nMessagesRegular;
     private int nMessagesSpam;
@@ -24,8 +25,10 @@ public class BayesTrainer {
     
     public BayesTrainer(String path, int type) throws IOException {
         ///Get training data:
+        gramType = type;
         reader = new MessagesReader(type);
         vocab = reader.getTrainingVocab(path);
+
     }
     
     /// Method computes the count of occurances of distinct words in regular and spam mails respectively:
@@ -91,7 +94,9 @@ public class BayesTrainer {
     
     private ContainerTrainingData generateReturnValue(){
         ContainerTrainingData container = new ContainerTrainingData();
-        cleanVocab();
+        if (gramType == 2) {
+            cleanVocab();
+        }
         container.setVocab(vocab);
         container.setnMessagesRegular(nMessagesRegular);
         container.setnMessagesSpam(nMessagesSpam);

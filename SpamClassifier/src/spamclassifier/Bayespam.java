@@ -65,7 +65,7 @@ public class Bayespam
         double max = 0;
         double maxTrueNeg = 0;
         int maxParam = 0;
-        for (int i = -100; i < 100; i++){
+        for (int i = 0; i < 1; i++){
             Classifier classifier = new Classifier(container, pathTraining, i, type);
             classifier.eval();
           /*  if (maxTrueNeg < classifier.getTrueNegRate()){
