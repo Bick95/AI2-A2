@@ -75,16 +75,16 @@ public class TextCleaner {
     /// Main method to determine whether string is a "special case"
     private String getSpecialCases(String str){
         if (str.contains("www.") || str.contains("http")){ 
-            return "internetaddress";
+            return "internetAddress";
         }
         if (isEMailAddress(str)){
-            return "emailaddress";
+            return "emailAddress";
         }
         if (isNumeric(str)){
-            return "number";
+            return "Number";
         }
         if (isDate(str)){
-            return "concretedate";
+            return "concreteDate";
         }
         
         return null;

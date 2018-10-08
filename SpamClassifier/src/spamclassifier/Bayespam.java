@@ -61,19 +61,21 @@ public class Bayespam
         }
     }
     
+    
+    /// Method takes the training vocabulary and the path to the training e-mail set and simulates it was classifying a testing set (which is the training set again).
+    /// The classifier bases its decision on both the posteriors and a constant parameter given to it which gets added to both posteriors.
+    /// This parameter is the variable i. By iterating through a range of i's, the method finds the integer for which adding it as a constant 
+    /// to all posteriors gives the best result when it comes to the summed percentage of correct classifications. 
+    /// Even though, this procedure runs at risk of overfitting, it helped improving the performance in classifying the testing set afterwards.
     static int parameterFitting(ContainerTrainingData container, String pathTraining, int type) throws IOException{
         double max = 0;
         double maxTrueNeg = 0;
         int maxParam = 0;
-        for (int i = 0; i < 1; i++){
+        for (int i = -10; i < 10; i++){
             Classifier classifier = new Classifier(container, pathTraining, i, type);
             classifier.eval();
-          /*  if (maxTrueNeg < classifier.getTrueNegRate()){
+            if ( max < classifier.getCombinedPercentageRight() ){
                 max = classifier.getCombinedPercentageRight();
-                maxParam = i;
-            } else*/ if (     max < classifier.getCombinedPercentageRightWeighted() 
-                        /*&&  maxTrueNeg >= classifier.getTrueNegRate()*/ ){
-                max = classifier.getCombinedPercentageRightWeighted();
                 maxParam = i;
             }
         }
@@ -83,7 +85,7 @@ public class Bayespam
    
     public static void main(String[] args) throws IOException
     {
-        ///prompt for uni/bigrams
+        /// Prompt for uni/bigrams
         Scanner typeSc = new Scanner(System.in);
         System.out.println("Which method dou you want to use? Type 1 for uningram, 2 for bigram, 3 for both");
         int type = 0;
@@ -120,6 +122,9 @@ public class Bayespam
         // Print out the hash table contained in container
         //container.printVocab(); /// for testing
 
+        /// Create a new classifier to classify test set based on training data (container) and fitted parameter (param)
+        /// Type refers to user's choice of treating e-mail contents as unigrams/bigrams/mixture
+        /// At the end, print confusion matrix and value of fitted parameter for transparency
         Classifier classifier = new Classifier(container, args[1], param, type);
         classifier.eval();
         classifier.printConfusionMatrix();

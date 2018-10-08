@@ -143,12 +143,4 @@ public class Classifier {
         double pNormalCorrect = (double) normalCorrect / ((double) t1Error + (double) normalCorrect) * 100.0;
         return pSpamCorrect + pNormalCorrect;
     }
-    
-    /// A higher true negative rate is worth more than a high true positive rate, in order to prevent regular mail from beieng classified as spam too often:
-    public double getCombinedPercentageRightWeighted(){
-        double reg_weight = 6;
-        double pSpamCorrect = (1-reg_weight) * ((double) spamCorrect / ((double) spamCorrect + (double) t2Error));
-        double pNormalCorrect = reg_weight * ((double) normalCorrect / ((double) t1Error + (double) normalCorrect));
-        return pSpamCorrect + pNormalCorrect;
-    }
 }
