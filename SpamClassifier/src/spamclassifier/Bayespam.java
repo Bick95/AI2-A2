@@ -71,7 +71,7 @@ public class Bayespam
         double max = 0;
         double maxTrueNeg = 0;
         int maxParam = 0;
-        for (int i = -10; i < 10; i++){
+        for (int i = -100; i < 100; i++){
             Classifier classifier = new Classifier(container, pathTraining, i, type);
             classifier.eval();
             if ( max < classifier.getCombinedPercentageRight() ){
@@ -87,7 +87,7 @@ public class Bayespam
     {
         /// Prompt for uni/bigrams
         Scanner typeSc = new Scanner(System.in);
-        System.out.println("Which method dou you want to use? Type 1 for uningram, 2 for bigram, 3 for both");
+        System.out.println("Which method do you want to use? Type 1 for uningram, 2 for bigram, 3 for both");
         int type = 0;
         do{
             type = typeSc.nextInt();
